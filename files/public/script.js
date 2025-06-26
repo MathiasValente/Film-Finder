@@ -1,4 +1,4 @@
-import { createURL, populateGenreDropdown } from './helpers.js'
+import { createURL, populateGenreDropdown, getResponseData, getSelectedGenre } from './helpers.js'
 
 /* The Movie Database website API initial config */
 const tmdbKey = import.meta.env.VITE_TMDB_API_KEY;
@@ -10,18 +10,20 @@ const getGenres = async (baseUrl) => {
     const subPath = '/genre/movie/list';
     const url = createURL(baseUrl, subPath, queryString);
 
-    try{
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Bad response');
-        }
-        const data = await response.json();
-        const genres = data.genres;
-        return genres;
-    } catch(error) {
-        console.log(error);
-    }
+    const genres = await getResponseData(url, 'genres');
+    return genres;
 };
+
+const getMovies = async (baseUrl) => {
+
+    const subPath = '/discover/movie';
+    const url = createURL(baseUrl, subPath, queryString);
+    const selectedGenre = getSelectedGenre();
+    url.searchParams.append('with_genres', selectedGenre);
+
+    const movies = await getResponseData(url, 'movies');
+    return movies;
+}
 
 const init = async () => {
     const genres = await getGenres(tmdbBaseUrl);
