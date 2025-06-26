@@ -10,6 +10,12 @@ export const populateGenreDropdown = (genres) => {
     }
 };
 
+// Returns the current genre selection from the dropdown menu
+export const getSelectedGenre = () => {
+    const selectedGenre = document.getElementById('genres').value;
+    return selectedGenre;
+};
+
 // Creates URL objects with URL class to create/manipulate urls
 export const createURL = (baseUrl, subpath='', queryString='') => {
     const url = new URL(baseUrl);
@@ -19,4 +25,35 @@ export const createURL = (baseUrl, subpath='', queryString='') => {
     if (queryString) url.search = queryString;
    
     return url;
+}
+
+// Formats API response data based on the requested search type
+export const getResponseData = async (url, searchType) => {
+    const data = await fetchData(url);
+
+    if (searchType === 'genres') {
+        const genres = data.genres;
+        return genres;
+    } else if (searchType == 'movies') {
+        const movies = data.results;
+        return movies;
+    } else if (searchType == 'movieInfo') {
+        const movieInfo = data;
+        return movieInfo;
+    }
+}
+
+// Fetches data from the provided URL and handles request errors
+const fetchData = async (url) => {
+    const errorMessage = 'Request Failed: something went wrong while fetching data!';
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(errorMessage);  
+        }
+        const data = await response.json();
+        return data;
+    } catch(err) {
+        console.error(err)
+    }
 }
