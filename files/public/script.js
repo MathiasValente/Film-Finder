@@ -1,7 +1,7 @@
 import { createURL, populateGenreDropdown } from './helpers.js'
 
 /* The Movie Database website API initial config */
-const tmdbKey = '4d1dcb6bce69e8413faab4ee898b9014';
+const tmdbKey = import.meta.env.VITE_TMDB_API_KEY;
 const tmdbBaseUrl = 'https://api.themoviedb.org/3';
 const queryString = `api_key=${tmdbKey}`;
 
