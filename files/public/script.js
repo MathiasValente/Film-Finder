@@ -1,4 +1,4 @@
-import { createURL, populateGenreDropdown, getResponseData, getSelectedGenre } from './helpers.js'
+import { createURL, populateGenreDropdown, getResponseData, getSelectedGenre, getRandomMovie, displayMovie, clearCurrentMovie } from './helpers.js'
 
 /* The Movie Database website API initial config */
 const tmdbKey = import.meta.env.VITE_TMDB_API_KEY;
@@ -11,7 +11,6 @@ const getGenres = async (baseUrl) => {
     const url = createURL(baseUrl, subPath, queryString);
 
     const genres = await getResponseData(url, 'genres');
-    console.log(genres);
     return genres;
 };
 
@@ -23,7 +22,6 @@ const getMovies = async (baseUrl) => {
     url.searchParams.append('with_genres', selectedGenre);
 
     const movies = await getResponseData(url, 'movies');
-    console.log(movies);
     return movies;
 }
 
@@ -33,8 +31,29 @@ const getMovieInfo = async (baseUrl, movie) => {
     const url = createURL(baseUrl, subpath, queryString);
 
     const movieInfo = await getResponseData(url, 'movieInfo');
-    console.log(movieInfo);
     return movieInfo;
+};
+
+const showRandomMovie = async (baseURL) => {
+  clearCurrentMovie();  // Now always clears before showing new one
+
+  const movies = await getMovies(baseURL);
+  const randomMovie = getRandomMovie(movies);
+  const info = await getMovieInfo(baseURL, randomMovie);
+
+  displayMovie(info);
+
+  // Button setup (important to rebind each time)
+  document.getElementById('likeBtn').onclick = likeMovie;
+  document.getElementById('dislikeBtn').onclick = dislikeMovie;
+};
+
+const likeMovie = () => {
+  showRandomMovie(tmdbBaseUrl);
+};
+
+const dislikeMovie = () => {
+  showRandomMovie(tmdbBaseUrl);
 };
 
 const init = async () => {
@@ -43,3 +62,7 @@ const init = async () => {
 }
 
 init();
+const playBtn = document.getElementById('playBtn');
+playBtn.addEventListener('click', () => {
+  showRandomMovie(tmdbBaseUrl);
+});
