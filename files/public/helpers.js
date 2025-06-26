@@ -37,6 +37,9 @@ export const getResponseData = async (url, searchType) => {
     } else if (searchType == 'movies') {
         const movies = data.results;
         return movies;
+    } else if (searchType == 'movieInfo') {
+        const movieInfo = data;
+        return movieInfo;
     }
 }
 
